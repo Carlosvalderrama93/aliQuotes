@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Launch Program",
-      "program": "${workspaceFolder}/src/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "console": "integratedTerminal",
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],

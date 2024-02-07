@@ -119,7 +119,7 @@ async function newQuote(): Promise<void> {
 }
 
 function listQuotes() {
-  const { products } = getData();
+  const products = getData();
   console.log("Products quotes are:");
   products.forEach((product: ProductType, index: number) => {
     const pos = ((index + 1).toString() + ".").green;
@@ -127,4 +127,10 @@ function listQuotes() {
   });
 
   console.log("\n");
+}
+
+function deleteQuote() {
+  const products = getData().filter((product) => {
+    
+  });
 }

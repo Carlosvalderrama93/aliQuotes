@@ -1,4 +1,5 @@
 import fs from "fs";
+import { nanoid } from "nanoid/non-secure";
 const JSON_FILE = "/home/carlos/Documents/Development/nodeJs/aliQuotes/src/data/data.json";
 export function getData() {
     try {
@@ -7,15 +8,19 @@ export function getData() {
     }
     catch (err) {
         console.error("Catched the following error: ", err);
-        return { productos: [] };
+        return [];
     }
 }
-export function saveData(newProduct) {
+export function saveData(product) {
+    const newProduct = { ...product, id: nanoid() };
     const data = getData();
-    data.products.push(newProduct);
+    data.push(newProduct);
     fs.writeFileSync(JSON_FILE, JSON.stringify(data, null, 2));
+    message(newProduct.title);
+}
+function message(product) {
     console.log("\n");
-    console.log("The " + newProduct.title.green + " was saved succesfully.");
+    console.log("The " + product.green + " was saved succesfully.");
     console.log("\n");
 }
 //# sourceMappingURL=dataFeatures.js.map

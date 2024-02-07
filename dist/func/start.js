@@ -88,12 +88,16 @@ async function newQuote() {
     saveData(answer);
 }
 function listQuotes() {
-    const { products } = getData();
+    const products = getData();
     console.log("Products quotes are:");
     products.forEach((product, index) => {
         const pos = ((index + 1).toString() + ".").green;
         console.log(`${pos} ${product.title} : $${product.price}`);
     });
     console.log("\n");
+}
+function deleteQuote() {
+    const products = getData().filter((product) => {
+    });
 }
 //# sourceMappingURL=start.js.map
