@@ -14,6 +14,8 @@ export function saveData(newProduct) {
     const data = getData();
     data.products.push(newProduct);
     fs.writeFileSync(JSON_FILE, JSON.stringify(data, null, 2));
-    console.log("Quote added succesfully.".green);
+    console.log("\n");
+    console.log("The " + newProduct.title.green + " was saved succesfully.");
+    console.log("\n");
 }
 //# sourceMappingURL=dataFeatures.js.map
