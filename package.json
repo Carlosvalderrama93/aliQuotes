@@ -6,12 +6,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "debug": "node src/index.js",
-    "start": "node src/index.js"
+    "debug": "node dist/index.js",
+    "start": "node dist/index.js",
+    "build": "tsc --watch"
   },
   "author": "Carlos Valderrama",
   "license": "ISC",
   "dependencies": {
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "inquirer": "^9.2.14"
+  },
+  "devDependencies": {
+    "@types/colors": "^1.2.1",
+    "@types/node": "^20.11.16",
+    "typescript": "^5.3.3"
   }
 }
