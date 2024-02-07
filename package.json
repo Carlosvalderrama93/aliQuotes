@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",
-    "inquirer": "^9.2.14"
+    "inquirer": "^9.2.14",
+    "nanoid": "^5.0.5"
   },
   "devDependencies": {
     "@types/colors": "^1.2.1",
