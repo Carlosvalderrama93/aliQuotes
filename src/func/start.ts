@@ -1,9 +1,10 @@
-import { createInterface } from "readline";
-import colors from "colors";
+import { createInterface, type Interface } from "readline";
 
 import { getData, saveData } from "./dataFeatures.js";
 
-function printMenu() {
+type Product = { name: string; price: number };
+
+function printMenu(): void {
   console.clear();
   console.log("==============================".green);
   console.log("       AliQuotes App:".green);
@@ -19,11 +20,11 @@ export function start() {
 }
 
 function userInput() {
-  const readLine = createInterface({
+  const readLine: Interface = createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  readLine.question("Select an option: ".green, (option) => {
+  readLine.question("Select an option: ".green, (option: string) => {
     readLine.close();
     if (option === "1") newQuote();
     else if (option === "2") listQuotes();
@@ -32,14 +33,15 @@ function userInput() {
 }
 
 function newQuote() {
-  const readLine = createInterface({
+  const readLine: Interface = createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  readLine.question("Add product name: ", (name) => {
-    readLine.question("Add price name: ", (price) => {
-      saveData({ name, price: parseFloat(price) });
+  readLine.question("Add product name: ", (name: string) => {
+    readLine.question("Add price name: ", (price: string) => {
+      const product: Product = { name, price: parseFloat(price) };
+      saveData(product);
       readLine.close();
     });
   });
@@ -50,23 +52,28 @@ function newQuote() {
 function listQuotes() {
   const { products } = getData();
   console.log("Quotes are:");
-  products.forEach((p, i) => console.log(`${i + 1}. ${p.name}: $${p.price}`));
+  products.forEach((product: Product, index: number) =>
+    console.log(`${index + 1}. ${product.name}: $${product.price}`)
+  );
   restartApp();
 }
 
 function restartApp() {
-  const readLine = createInterface({
+  const readLine: Interface = createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  readLine.question("Do you want run the app again? (Y/N)".green, (answer) => {
-    readLine.close();
-    if (answer.toLocaleLowerCase() === "n") process.exit();
-    else if (answer.toLocaleLowerCase() === "y") start();
-    else {
-      console.log("Select a valid option".red);
-      restartApp();
+  readLine.question(
+    "Do you want run the app again? (Y/N)".green,
+    (answer: string) => {
+      readLine.close();
+      if (answer.toLocaleLowerCase() === "n") process.exit();
+      else if (answer.toLocaleLowerCase() === "y") start();
+      else {
+        console.log("Select a valid option".red);
+        restartApp();
+      }
     }
-  });
+  );
 }
