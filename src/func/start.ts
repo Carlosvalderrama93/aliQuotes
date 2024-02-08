@@ -1,7 +1,12 @@
 import { createInterface, type Interface } from "readline";
 import inquirer from "inquirer";
 
-import { getData, saveData } from "./dataFeatures.js";
+import {
+  getProducts,
+  addProducts,
+  removeProducts,
+  type FinalProductType,
+} from "./dataFeatures.js";
 
 export type ProductType = { title: string; price: string };
 
@@ -26,15 +31,16 @@ type QuoteQType = {
   validate(answer: string): string | true;
 };
 
-async function initialMenu(): Promise<number> {
+export async function promptMenu(): Promise<number> {
   const questions: MenuQType[] = [
     {
       type: "list",
       name: "answer",
       message: "Welcome to AliQuotes. What do you want?",
       choices: [
-        { value: 1, name: "Add Quote" },
-        { value: 2, name: "List Quotes" },
+        { value: 1, name: "Add product" },
+        { value: 2, name: "List products" },
+        { value: 3, name: "Delete a product" },
         { value: 0, name: "Close App" },
       ],
     },
@@ -44,34 +50,37 @@ async function initialMenu(): Promise<number> {
   return answer;
 }
 
-export async function startApp() {
-  const answerUser: number = await initialMenu();
-  processAnswer(answerUser);
+export default async function promptStart() {
+  const answerUser: number = await promptMenu();
+  promptProcessator(answerUser);
 }
 
-async function processAnswer(answer: number) {
+async function promptProcessator(answer: number) {
   switch (answer) {
     case 1:
-      driveAction(newQuote);
+      driveAction(promptAddProducts);
       break;
     case 2:
-      driveAction(listQuotes);
+      driveAction(promptListProducts);
+      break;
+    case 3:
+      driveAction(promptRemoveProducts);
       break;
     case 0:
       console.log("¡Closing AliQuotes...!".green);
       return;
     default:
-      startApp();
+      promptStart();
       break;
   }
 }
 
 async function driveAction<T extends () => ReturnType<T>>(callback: T) {
   await callback();
-  await restartApp();
+  await promptRestart();
 }
 
-async function restartApp(): Promise<void> {
+async function promptRestart(): Promise<void> {
   const questions: RestartQType[] = [
     {
       type: "list",
@@ -85,41 +94,56 @@ async function restartApp(): Promise<void> {
   ];
 
   const { answer }: { answer: boolean } = await inquirer.prompt(questions);
-  if (answer) startApp();
+  if (answer) promptStart();
 }
 
-async function newQuote(): Promise<void> {
-  const questions: QuoteQType[] = [
-    {
-      type: "input",
-      name: "title",
-      message: "Add product name",
-      validate(answer: string) {
-        if (answer.length) return true;
-        return "Type a product name please...";
+async function promptAddProducts(quantity = 1): Promise<void> {
+  const answers: ProductType[] = [];
+  let i = 0;
+  while (quantity > i) {
+    i++;
+    const questions: QuoteQType[] = [
+      {
+        type: "input",
+        name: "title",
+        message: "Add product name",
+        validate(answer: string) {
+          if (answer.length) return true;
+          return "Type a product name please...";
+        },
       },
-    },
-    {
-      type: "input",
-      name: "price",
-      message: "Add product price",
-      validate(answer: string) {
-        if (answer.length) return true;
-        return "Type a product price please...".green;
+      {
+        type: "input",
+        name: "price",
+        message: "Add product price",
+        validate(answer: string) {
+          if (answer.length) return true;
+          return "Type a product price please...".green;
+        },
       },
-    },
-  ];
+    ];
 
-  let answer = {};
-  for (const question of questions) {
-    const answerProp = await inquirer.prompt(question);
-    answer = { ...answer, ...answerProp };
+    let answer: {};
+    for (const question of questions) {
+      const answerProp = await inquirer.prompt(question);
+      answer = { ...answer, ...answerProp };
+    }
+    answers.push(answer as ProductType);
   }
-  saveData(answer as ProductType);
+
+  addProducts(answers);
 }
 
-function listQuotes() {
-  const products = getData();
+function promptListProducts() {
+  const products = getProducts();
+
+  if (!products.length) {
+    console.clear();
+    console.log("There is not products to delete...".red);
+    console.log("\n");
+    return;
+  }
+
   console.log("Products quotes are:");
   products.forEach((product: ProductType, index: number) => {
     const pos = ((index + 1).toString() + ".").green;
@@ -129,8 +153,34 @@ function listQuotes() {
   console.log("\n");
 }
 
-function deleteQuote() {
-  const products = getData().filter((product) => {
-    
+async function promptRemoveProducts() {
+  const products: FinalProductType[] = getProducts();
+  if (!products.length) {
+    console.clear();
+    console.log("There is not products to delete...".red);
+    console.log("\n");
+    return;
+  }
+  const choices = products.map((product) => {
+    return { value: product.id, name: product.title, checked: false };
   });
+  const questions = [
+    {
+      type: "checkbox",
+      name: "idProducts",
+      message: "Select the product(s) to remove",
+      choices,
+      checked: false,
+      validate(idProducts: string[]) {
+        if (idProducts.length === 0) return "Type a product name please...";
+        return true;
+      },
+    },
+  ];
+
+  const { idProducts }: { idProducts: string[] } = await inquirer.prompt(
+    questions
+  );
+
+  removeProducts(idProducts);
 }
