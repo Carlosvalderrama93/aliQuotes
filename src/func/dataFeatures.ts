@@ -5,26 +5,37 @@ import { nanoid } from "nanoid/non-secure";
 const JSON_FILE =
   "/home/carlos/Documents/Development/nodeJs/aliQuotes/src/data/data.json";
 
-export function getData(): ProductType[] {
+export type FinalProductType = ProductType & { id: string };
+
+export function getProducts(): FinalProductType[] {
   try {
     const data = fs.readFileSync(JSON_FILE, "utf8");
-    return JSON.parse(data);
+    const products: FinalProductType[] = JSON.parse(data);
+    return products;
   } catch (err) {
     console.error("Catched the following error: ", err);
     return [];
   }
 }
 
-export function saveData(product: ProductType) {
-  const newProduct: ProductType & { id: string } = { ...product, id: nanoid() };
-  const data = getData();
-  data.push(newProduct);
-  fs.writeFileSync(JSON_FILE, JSON.stringify(data, null, 2));
-  message(newProduct.title);
+export function addProducts(products: ProductType[]) {
+  const newProducts = getProducts();
+  products.forEach((product) => {
+    const newProduct: FinalProductType = { ...product, id: nanoid() };
+    newProducts.push(newProduct);
+    message(newProduct.title);
+  });
+  fs.writeFileSync(JSON_FILE, JSON.stringify(newProducts, null, 2));
 }
 
 function message(product: string) {
   console.log("\n");
   console.log("The " + product.green + " was saved succesfully.");
   console.log("\n");
+}
+
+export function removeProducts(ids: string[]) {
+  let products = getProducts();
+  ids.forEach((idP) => (products = products.filter(({ id }) => id !== idP)));
+  fs.writeFileSync(JSON_FILE, JSON.stringify(products, null, 2));
 }
