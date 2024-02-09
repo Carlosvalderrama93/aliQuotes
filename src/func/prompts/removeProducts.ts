@@ -1,12 +1,9 @@
 import inquirer from "inquirer";
-import {
-  getProducts,
-  removeProducts,
-  type FinalProductType,
-} from "../dataFeatures.js";
+import { getProducts, removeProducts } from "../dataFeatures.js";
+import type { Product } from "./addProduct/addProducts.js";
 
 export default async function promptRemoveProducts() {
-  const products: FinalProductType[] = getProducts();
+  const products: Product[] = getProducts();
   if (!products.length) {
     console.clear();
     console.log("There is not products to delete...".red);
@@ -14,7 +11,7 @@ export default async function promptRemoveProducts() {
     return;
   }
   const choices = products.map((product) => {
-    return { value: product.id, name: product.title, checked: false };
+    return { value: product.id, name: product.basic.title, checked: false };
   });
   const questions = [
     {

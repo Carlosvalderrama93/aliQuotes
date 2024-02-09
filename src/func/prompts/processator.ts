@@ -1,5 +1,5 @@
 import promptStart from "../start.js";
-import promptAddProducts from "./addProducts.js";
+import promptAddProducts from "./addProduct/addProducts.js";
 import promptListProducts from "./listProducts.js";
 import promptRemoveProducts from "./removeProducts.js";
 import promptRestart from "./restart.js";

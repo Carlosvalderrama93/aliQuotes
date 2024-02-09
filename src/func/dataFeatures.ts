@@ -1,16 +1,15 @@
 import fs from "fs";
-import type { ProductType } from "./start.js";
 import { nanoid } from "nanoid/non-secure";
+
+import type { Product } from "./prompts/addProduct/addProducts.js";
 
 const JSON_FILE =
   "/home/carlos/Documents/Development/nodeJs/aliQuotes/src/data/data.json";
 
-export type FinalProductType = ProductType & { id: string };
-
-export function getProducts(): FinalProductType[] {
+export function getProducts(): Product[] {
   try {
     const data = fs.readFileSync(JSON_FILE, "utf8");
-    const products: FinalProductType[] = JSON.parse(data);
+    const products: Product[] = JSON.parse(data);
     return products;
   } catch (err) {
     console.error("Catched the following error: ", err);
@@ -18,12 +17,12 @@ export function getProducts(): FinalProductType[] {
   }
 }
 
-export function addProducts(products: ProductType[]) {
+export function createProduct(products: Product[]) {
   const newProducts = getProducts();
   products.forEach((product) => {
-    const newProduct: FinalProductType = { ...product, id: nanoid() };
+    const newProduct: Product = { ...product, id: nanoid() };
     newProducts.push(newProduct);
-    message(newProduct.title);
+    message(newProduct.basic.title);
   });
   fs.writeFileSync(JSON_FILE, JSON.stringify(newProducts, null, 2));
 }
