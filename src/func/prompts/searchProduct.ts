@@ -1,8 +1,13 @@
 import inquirer from "inquirer";
 
-import { getProducts, type FinalProductType } from "../dataFeatures.js";
+import { getProducts } from "../dataFeatures.js";
 import promptListProducts from "./listProducts.js";
-import type { QuestionPromptType } from "./addProducts.js";
+import type { Product, QuestionPromptType } from "./addProduct/addProducts.js";
+import type { BasicInfoType } from "./addProduct/basicInfo.js";
+import type { PriceType } from "./addProduct/price.js";
+import type { SampleType } from "./addProduct/sample.js";
+import type { MoreInfoType } from "./addProduct/moreInfo.js";
+import type { VariationsType } from "./addProduct/variation.js";
 
 export default async function PromptSearchProduct() {
   const questions: QuestionPromptType[] = [
@@ -17,21 +22,39 @@ export default async function PromptSearchProduct() {
     },
   ];
 
-  const { title } = await inquirer.prompt(questions); // m
-  const toList = filteredProducts(title);
-  promptListProducts(toList);
+  const { title } = await inquirer.prompt(questions);
+  const list = filteredProducts(title);
+  promptListProducts({ filtered: true, list });
 }
 
-function filteredProducts(toSearch: string): FinalProductType[] {
+function filteredProducts(toSearch: string): Product[] {
   const products = getProducts();
-
-  const filteredProducts: FinalProductType[] = products.filter((product) => {
-    const values: string[] = Object.values(product);
-    const isTrue = values.some((value) =>
-      value.toLowerCase().includes(toSearch)
-    );
-    if (isTrue) return product;
+  const filteredProducts: Product[] = products.filter((product) => {
+    const values: string[] = valuesUnificator(Object.values(product));
+    const finded = finderMatch(toSearch, values);
+    if (finded) return product;
   });
-
   return filteredProducts;
 }
+
+function finderMatch(what: string, where: string[]) {
+  const finded: boolean = where.some((e) => e.toLowerCase().includes(what));
+  return finded;
+}
+
+function valuesUnificator(toMerge: X[]): string[] {
+  const merged = toMerge.reduce((prev, crr) => {
+    const values = Object.values(crr);
+    return [...prev, ...values];
+  }, []);
+
+  return merged;
+}
+
+type X =
+  | BasicInfoType
+  | PriceType
+  | SampleType
+  | MoreInfoType
+  | VariationsType
+  | string;
