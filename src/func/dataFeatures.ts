@@ -4,7 +4,7 @@ import { nanoid } from "nanoid/non-secure";
 import type { Product } from "./prompts/addProduct/addProducts.js";
 
 const JSON_FILE =
-  "/home/carlos/Documents/Development/nodeJs/aliQuotes/src/data/data.json";
+  "/home/carlos/Documents/Development/NodeJs/aliQuotes/src/data/data.json";
 
 export function getProducts(): Product[] {
   try {

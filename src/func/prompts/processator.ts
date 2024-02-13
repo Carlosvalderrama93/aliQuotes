@@ -1,6 +1,7 @@
 import promptStart from "../start.js";
 import promptAddProducts from "./addProduct/addProducts.js";
 import promptListProducts from "./listProducts.js";
+import { printTablePrompt } from "./listTable.js";
 import promptRemoveProducts from "./removeProducts.js";
 import promptRestart from "./restart.js";
 import PromptSearchProduct from "./searchProduct.js";
@@ -8,16 +9,24 @@ import PromptSearchProduct from "./searchProduct.js";
 export default async function promptProcessator(answer: number) {
   switch (answer) {
     case 1:
-      driveAction(promptAddProducts);
+      await promptAddProducts();
+      await promptRestart();
       break;
     case 2:
-      driveAction(promptListProducts);
+      promptListProducts({ filtered: false, list: [] });
+      await promptRestart();
       break;
     case 3:
-      driveAction(promptRemoveProducts);
+      await promptRemoveProducts();
+      await promptRestart();
       break;
     case 4:
-      driveAction(PromptSearchProduct);
+      await PromptSearchProduct();
+      await promptRestart();
+      break;
+    case 5:
+      await printTablePrompt();
+      await promptRestart();
       break;
     case 0:
       console.log("¡Closing AliQuotes...!".green);
@@ -26,9 +35,4 @@ export default async function promptProcessator(answer: number) {
       promptStart();
       break;
   }
-}
-
-async function driveAction<T extends () => ReturnType<T>>(callback: T) {
-  await callback();
-  await promptRestart();
 }
