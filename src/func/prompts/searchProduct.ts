@@ -30,7 +30,7 @@ export default async function PromptSearchProduct() {
 function filteredProducts(toSearch: string): Product[] {
   const products = getProducts();
   const filteredProducts: Product[] = products.filter((product) => {
-    const values: string[] = valuesUnificator(Object.values(product));
+    const values: string[] = valuesUnificator(product);
     const finded = finderMatch(toSearch, values);
     if (finded) return product;
   });
@@ -42,19 +42,13 @@ function finderMatch(what: string, where: string[]) {
   return finded;
 }
 
-function valuesUnificator(toMerge: X[]): string[] {
-  const merged = toMerge.reduce((prev, crr) => {
+export function valuesUnificator(product: Product): string[] {
+  const productValues = Object.values(product);
+  const mergedValues = productValues.reduce((prev, crr) => {
     const values = Object.values(crr);
+    if (typeof crr === "string") return [...prev];
     return [...prev, ...values];
   }, []);
 
-  return merged;
+  return mergedValues;
 }
-
-type X =
-  | BasicInfoType
-  | PriceType
-  | SampleType
-  | MoreInfoType
-  | VariationsType
-  | string;
