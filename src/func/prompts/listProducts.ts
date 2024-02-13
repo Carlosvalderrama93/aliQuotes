@@ -1,14 +1,21 @@
+import chalk from "chalk";
 import inquirer from "inquirer";
+import table from "inquirer-table-input";
+
 import { getProducts } from "../dataFeatures.js";
 import type { Product } from "./addProduct/addProducts.js";
+import { keysUnificator, valuesUnificator } from "./searchProduct.js";
 
 type Props = { filtered: boolean; list: Product[] };
 
 export default function promptListProducts(props: Props) {
-  const products = getProducts();
-  if (props?.filtered && props.list.length) return printList(props.list);
-  if (products.length && !props) return printList(products);
+  if (props.filtered) {
+    if (props.list.length) return printList(props.list);
+    return printEmptyList();
+  }
 
+  const products = getProducts();
+  if (products.length) return printList(products);
   return printEmptyList();
 }
 
