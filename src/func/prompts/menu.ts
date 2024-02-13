@@ -18,11 +18,13 @@ export default async function promptMenu(): Promise<number> {
         { value: 2, name: "List products" },
         { value: 3, name: "Delete a product" },
         { value: 4, name: "Search a product" },
+        { value: 5, name: "list a product table" },
         { value: 0, name: "Close App" },
       ],
     },
   ];
   console.clear();
   const { answer }: { answer: number } = await inquirer.prompt(questions);
+
   return answer;
 }
