@@ -1,15 +1,21 @@
 type Product = {
   id: string;
-  name: string;
+  url: string;
+  image: string;
+  title: string;
   hsCode: string;
   materials: string;
-  samplePrice: number;
-  fobPrice: number;
   moq: number;
-  privateLabel: { valid: boolean; moq: number };
-  volume: number;
-  weight: number;
+  samplePrice: {
+    value: number;
+    quantity: number;
+    shipment: { type: string; value: number };
+  };
   packaging: { type: string; weight: number };
+  privateLabel: { valid: boolean; moq: number };
+  price: { value: number; incoterm: string; quantity: number };
+  volume: { height: number; length: number; width: number };
+  weight: number;
   carga: Carga;
 };
 

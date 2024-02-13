@@ -3,10 +3,15 @@ import inquirer from "inquirer";
 import table from "inquirer-table-input";
 
 import { valuesUnificator } from "./searchProduct.js";
-import { getProducts } from "../dataFeatures.js";
+import {
+  getProducts,
+  toBasicStructure,
+  updateProduct,
+} from "../dataFeatures.js";
+import type { Product } from "./addProduct/addProducts.js";
 
 export async function printTablePrompt() {
-  const rows: string[][] = [rowGenerator()];
+  const rows: string[][] = rowsGenerator();
   const columns: {
     name: string;
     value: string;
@@ -15,7 +20,7 @@ export async function printTablePrompt() {
   const questions = [
     {
       type: "table-input",
-      name: "pricing",
+      name: "product",
       message: "PRICING",
       infoMessage: `Navigate and Edit`,
       hideInfoWhenKeyPressed: true,
@@ -31,13 +36,12 @@ export async function printTablePrompt() {
     },
   ];
   inquirer.registerPrompt("table-input", table);
-  const tableList = await inquirer.prompt(questions);
-}
+  const { product } = await inquirer.prompt(questions);
+  const adaptedProducts: Product[] = product.result.map((product) =>
+    toBasicStructure(product)
+  );
 
-function rowGenerator() {
-  const products = getProducts();
-  const list = products.map((product) => valuesUnificator(product)).flat();
-  return list;
+  updateProduct(adaptedProducts);
 }
 
 function columnsGenerator() {
@@ -45,6 +49,7 @@ function columnsGenerator() {
   return keys.map((key) => ({
     name: key,
     value: key,
+    editable: "text",
   }));
 }
 
@@ -52,11 +57,21 @@ export function keysUnificator(): string[] {
   const products = getProducts();
   const productValues = Object.values(products[0]);
 
-  const mergedkeys = productValues.reduce((prev, crr) => {
-    const keys = Object.keys(crr);
-    if (typeof crr === "string") return [...prev]; // This should be the ID. But I need to find a better way to skip this iteration.
-    return [...prev, ...keys];
-  }, []);
+  const mergedkeys = productValues.reduce(
+    (prev, crr) => {
+      const keys = Object.keys(crr);
+      if (typeof crr === "string") return [...prev, "id"]; // This should be the ID. But I need to find a better way to skip this iteration.
+      return [...prev, ...keys];
+    },
+    ["#"]
+  );
 
   return mergedkeys;
+}
+
+function rowsGenerator() {
+  const products = getProducts();
+  const rows = products.map((product, i) => valuesUnificator(product, i + 1));
+
+  return rows;
 }

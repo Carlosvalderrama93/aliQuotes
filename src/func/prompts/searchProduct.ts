@@ -42,13 +42,19 @@ function finderMatch(what: string, where: string[]) {
   return finded;
 }
 
-export function valuesUnificator(product: Product): string[] {
+export function valuesUnificator(
+  product: Product,
+  index: number = 0
+): string[] {
   const productValues = Object.values(product);
-  const mergedValues = productValues.reduce((prev, crr) => {
-    const values = Object.values(crr);
-    if (typeof crr === "string") return [...prev];
-    return [...prev, ...values];
-  }, []);
+  const mergedValues = productValues.reduce(
+    (prev, crr) => {
+      const values = Object.values(crr);
+      if (typeof crr === "string") return [...prev, crr];
+      return [...prev, ...values];
+    },
+    index ? [index.toString()] : []
+  );
 
   return mergedValues;
 }

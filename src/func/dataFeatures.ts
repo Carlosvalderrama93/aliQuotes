@@ -38,3 +38,74 @@ export function removeProducts(ids: string[]) {
   ids.forEach((idP) => (products = products.filter(({ id }) => id !== idP)));
   fs.writeFileSync(JSON_FILE, JSON.stringify(products, null, 2));
 }
+
+export function updateProduct(data: Product[]) {
+  const products = getProducts();
+  const newProducts = products.map((p) => data.find(({ id }) => id === p.id));
+  fs.writeFileSync(JSON_FILE, JSON.stringify(newProducts, null, 2));
+}
+export function toBasicStructure(toTransform) {
+  const {
+    title,
+    price,
+    hsCode,
+    packaging,
+    volume,
+    privateLabel,
+    url,
+    materials,
+    samplePrice,
+    sampleQuantity,
+    sampleDelivery,
+    colors,
+    sizes,
+    unitPrice,
+    incoterm,
+    moq,
+    id,
+  } = toTransform;
+
+  const basic = {
+    basic: { title, price, hsCode },
+    moreInfo: { packaging, volume, privateLabel, url, materials },
+    sample: { samplePrice, sampleQuantity, sampleDelivery },
+    variations: { colors, sizes },
+    price: { unitPrice, incoterm, moq },
+    id,
+  };
+
+  return basic;
+}
+
+export function toFinalStructure(toTransform) {
+  const {
+    basic: { title, price, hsCode },
+    moreInfo: { packaging, volume, privateLabel, url, materials },
+    sample: { samplePrice, sampleQuantity, sampleDelivery },
+    variations: { colors, sizes },
+    price: { unitPrice, incoterm, moq },
+    id,
+  } = toTransform;
+
+  const final = {
+    title,
+    price,
+    hsCode,
+    packaging,
+    volume,
+    privateLabel,
+    url,
+    materials,
+    samplePrice,
+    sampleQuantity,
+    sampleDelivery,
+    colors,
+    sizes,
+    unitPrice,
+    incoterm,
+    moq,
+    id,
+  };
+
+  return final;
+}

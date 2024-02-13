@@ -1,10 +1,10 @@
 import { describe, test, expect } from "@jest/globals";
 
-import { getData } from "../func/dataFeatures.js";
+import { getProducts } from "../func/dataFeatures.js";
 
-describe("Unit testing for 'getData' function", () => {
+describe("Unit testing for 'getProducts' function", () => {
   test("Should return an 'Array' when is invoked", () => {
-    const products = getData();
+    const products = getProducts();
     const isArray = Array.isArray(products);
     expect(isArray).toBeTruthy();
   });

@@ -1,10 +1,5 @@
-import chalk from "chalk";
-import inquirer from "inquirer";
-import table from "inquirer-table-input";
-
-import { getProducts } from "../dataFeatures.js";
+import { getProducts, toFinalStructure } from "../dataFeatures.js";
 import type { Product } from "./addProduct/addProducts.js";
-import { keysUnificator, valuesUnificator } from "./searchProduct.js";
 
 type Props = { filtered: boolean; list: Product[] };
 
@@ -26,10 +21,8 @@ function printEmptyList() {
 }
 
 function printList(toList: Product[]) {
+  const products = toList.map((product) => toFinalStructure(product));
   console.log("Products quotes are:");
-  toList.forEach((product, index: number) => {
-    const pos = ((index + 1).toString() + ".").green;
-    console.log(`${pos} ${product.basic.title} : $${product.price}`);
-  });
+  console.table(products);
   console.log("\n");
 }
